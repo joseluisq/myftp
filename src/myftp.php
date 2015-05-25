@@ -60,16 +60,45 @@ class MyFTP {
    * 
    * @param string $filepath_local
    * @param string $filepath_remote
+   * @param string $transfer_mode  The transfer mode. Must be either FTP_ASCII or FTP_BINARY.
    * @return boolean
    */
-  function upload($filepath_local, $filepath_remote) {
+  function upload($filepath_local, $filepath_remote, $transfer_mode = NULL) {
     $result = FALSE;
 
     if ($this->_logged) {
-      $ascii_array = array('txt', 'csv', 'tsv', 'js', 'html', 'css');
-      $extension = end(explode('.', $filepath_local));
-      $mode = (in_array($extension, $ascii_array)) ? FTP_ASCII : FTP_BINARY;
-      $result = ftp_put($this->_connection_id, $filepath_remote, $filepath_local, $mode);
+      $transfer_mode = $transfer_mode ? $transfer_mode : $this->get_transfer_mode($filepath_local);
+      $result = ftp_put($this->_connection_id, $filepath_remote, $filepath_local, $transfer_mode);
+    }
+
+    return $result;
+  }
+
+  /**
+   * Get FTP transfer mode
+   * 
+   * @param string $filepath  The transfer mode. Must be either FTP_ASCII or FTP_BINARY.
+   * @return int
+   */
+  private function get_transfer_mode($filepath) {
+    $ascii_array = array('txt', 'csv', 'tsv', 'js', 'html', 'css');
+    $extension = end(explode('.', $filepath));
+    return (in_array($extension, $ascii_array)) ? FTP_ASCII : FTP_BINARY;
+  }
+
+  /**
+   * Downloads a file from the FTP server.
+   * 
+   * @param string $filepath_remote  Filename of specified file
+   * @param string $transfer_mode  The transfer mode. Must be either FTP_ASCII or FTP_BINARY.
+   * @return int Returns TRUE on success or FALSE on failure.
+   */
+  function get_file($filepath_remote, $filepath_local, $transfer_mode = NULL) {
+    $result = FALSE;
+
+    if ($this->_logged) {
+      $transfer_mode = $transfer_mode ? $transfer_mode : $this->get_transfer_mode($filepath_remote);
+      $result = ftp_get($this->_connection_id, $filepath_local, $filepath_remote, $transfer_mode);
     }
 
     return $result;
