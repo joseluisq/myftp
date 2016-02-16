@@ -33,3 +33,5 @@ if ($is_connected) {
 
 ## Licence
 MIT licence
+
+© 2016 [José Luis Quintana](http://quintana.io)
