@@ -107,11 +107,12 @@ class MyFTP {
   /**
    * Returns a list of files in the given directory.
    * 
+   * @param $dirname  Directory path.
    * @return array  Returns an array of filenames from the specified directory 
    * on success or FALSE on error.
    */
-  function get_list() {
-    return ($this->_logged) ? ftp_nlist($this->_connection_id, '.') : FALSE;
+  function get_list($dirname = '.') {
+    return ($this->_logged) ? ftp_nlist($this->_connection_id, $dirname) : FALSE;
   }
 
   /**
